@@ -1,0 +1,38 @@
+{
+  "name": "@tombell/4ad",
+  "version": "1.0.0",
+  "description": "A simple library to parse dice syntax for Four Against Darkness games.",
+  "keywords": [
+    "dice",
+    "die",
+    "4ad",
+    "four against darkness"
+  ],
+  "author": "Tom Bell <tomb@tomb.io>",
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "bunx tsc -p tsconfig.build.json",
+    "lint": "bunx eslint",
+    "test": "bun test",
+    "coverage": "bun test --coverage",
+    "prepublishOnly": "rm -fr dist/ && bun run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/bun": "latest",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
+    "jiti": "^2.4.2",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.0"
+  }
+}
