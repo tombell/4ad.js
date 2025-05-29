@@ -9,7 +9,7 @@ export function parse(notation: string) {
 
   const count = parseInt(match[1], 10) || 1;
   const sides = parseInt(match[2], 10);
-  const modSign = match[3];
+  const modSign = match[3] || undefined;
   const modValue = match[4] ? parseInt(match[4], 10) : 0;
 
   return { count, sides, modSign, modValue };
