@@ -1,4 +1,4 @@
-import { describe, expect, it as test } from "bun:test";
+import { describe, expect, test } from "bun:test";
 
 import { parse } from "./index";
 
