@@ -17,15 +17,15 @@
     "dist/"
   ],
   "scripts": {
-    "build": "bunx tsc -p tsconfig.build.json",
-    "lint": "bunx eslint",
     "test": "bun test",
     "coverage": "bun test --coverage",
-    "prepublishOnly": "rm -fr dist/ && bun run build"
+    "check": "bunx prettier --check .",
+    "lint": "bunx eslint",
+    "build": "bunx tsc -p tsconfig.build.json",
+    "prepublishOnly": "bun run build"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
-    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/bun": "latest",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
