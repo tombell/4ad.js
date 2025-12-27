@@ -1,6 +1,6 @@
 {
   "name": "@tombell/4ad",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple library to parse dice syntax for Four Against Darkness games.",
   "keywords": [
     "dice",
