@@ -11,30 +11,27 @@ describe("parse", () => {
     });
 
     test("single six sided die", () => {
-      const { count, sides, modSign, modValue } = parse("d6");
+      const { dice, modifier } = parse("d6");
 
-      expect(count).toBe(1);
-      expect(sides).toBe(6);
-      expect(modSign).toBeUndefined();
-      expect(modValue).toBe(0);
+      expect(dice).toHaveLength(1);
+      expect(dice[0]).toEqual({ count: 1, sides: 6, sign: 1 });
+      expect(modifier).toBe(0);
     });
 
     test("single twenty sided die", () => {
-      const { count, sides, modSign, modValue } = parse("1d20");
+      const { dice, modifier } = parse("1d20");
 
-      expect(count).toBe(1);
-      expect(sides).toBe(20);
-      expect(modSign).toBeUndefined();
-      expect(modValue).toBe(0);
+      expect(dice).toHaveLength(1);
+      expect(dice[0]).toEqual({ count: 1, sides: 20, sign: 1 });
+      expect(modifier).toBe(0);
     });
 
     test("multiple 12 sided die", () => {
-      const { count, sides, modSign, modValue } = parse("6d12");
+      const { dice, modifier } = parse("6d12");
 
-      expect(count).toBe(6);
-      expect(sides).toBe(12);
-      expect(modSign).toBeUndefined();
-      expect(modValue).toBe(0);
+      expect(dice).toHaveLength(1);
+      expect(dice[0]).toEqual({ count: 6, sides: 12, sign: 1 });
+      expect(modifier).toBe(0);
     });
   });
 
@@ -47,42 +44,81 @@ describe("parse", () => {
 
     describe("with positive modifier", () => {
       test("single six sided die with no whitespace", () => {
-        const { count, sides, modSign, modValue } = parse("d6+1");
+        const { dice, modifier } = parse("d6+1");
 
-        expect(count).toBe(1);
-        expect(sides).toBe(6);
-        expect(modSign).toBe("+");
-        expect(modValue).toBe(1);
+        expect(dice).toHaveLength(1);
+        expect(dice[0]).toEqual({ count: 1, sides: 6, sign: 1 });
+        expect(modifier).toBe(1);
       });
 
       test("single twenty sided die with whitespace", () => {
-        const { count, sides, modSign, modValue } = parse("1d20 + 20");
+        const { dice, modifier } = parse("1d20 + 20");
 
-        expect(count).toBe(1);
-        expect(sides).toBe(20);
-        expect(modSign).toBe("+");
-        expect(modValue).toBe(20);
+        expect(dice).toHaveLength(1);
+        expect(dice[0]).toEqual({ count: 1, sides: 20, sign: 1 });
+        expect(modifier).toBe(20);
       });
     });
 
     describe("with negative modifier", () => {
       test("single six sided die with no whitespace", () => {
-        const { count, sides, modSign, modValue } = parse("d6-1");
+        const { dice, modifier } = parse("d6-1");
 
-        expect(count).toBe(1);
-        expect(sides).toBe(6);
-        expect(modSign).toBe("-");
-        expect(modValue).toBe(1);
+        expect(dice).toHaveLength(1);
+        expect(dice[0]).toEqual({ count: 1, sides: 6, sign: 1 });
+        expect(modifier).toBe(-1);
       });
 
       test("single twenty sided die with whitespace", () => {
-        const { count, sides, modSign, modValue } = parse("1d20 - 20");
+        const { dice, modifier } = parse("1d20 - 20");
 
-        expect(count).toBe(1);
-        expect(sides).toBe(20);
-        expect(modSign).toBe("-");
-        expect(modValue).toBe(20);
+        expect(dice).toHaveLength(1);
+        expect(dice[0]).toEqual({ count: 1, sides: 20, sign: 1 });
+        expect(modifier).toBe(-20);
       });
+    });
+  });
+
+  describe("multiple dice groups", () => {
+    test("mix of positive and negative dice", () => {
+      const { dice, modifier } = parse("2d6 + 1d8 - d4");
+
+      expect(dice).toHaveLength(3);
+      expect(dice[0]).toEqual({ count: 2, sides: 6, sign: 1 });
+      expect(dice[1]).toEqual({ count: 1, sides: 8, sign: 1 });
+      expect(dice[2]).toEqual({ count: 1, sides: 4, sign: -1 });
+      expect(modifier).toBe(0);
+    });
+
+    test("numeric modifiers between dice", () => {
+      const { dice, modifier } = parse("2d6+3-10+1d4");
+
+      expect(dice).toHaveLength(2);
+      expect(dice[0]).toEqual({ count: 2, sides: 6, sign: 1 });
+      expect(dice[1]).toEqual({ count: 1, sides: 4, sign: 1 });
+      expect(modifier).toBe(-7);
+    });
+
+    test("leading negative dice", () => {
+      const { dice, modifier } = parse("-d6+2");
+
+      expect(dice).toHaveLength(1);
+      expect(dice[0]).toEqual({ count: 1, sides: 6, sign: -1 });
+      expect(modifier).toBe(2);
+    });
+  });
+
+  describe("invalid multi-group syntax", () => {
+    test("double sign", () => {
+      expect(() => {
+        parse("d6--1");
+      }).toThrow("invalid dice notation");
+    });
+
+    test("missing dice group", () => {
+      expect(() => {
+        parse("+2");
+      }).toThrow("invalid dice notation");
     });
   });
 });
@@ -198,6 +234,37 @@ describe("roll", () => {
         expect(modifier).toBe(-1);
         expect(total).toBe(19);
       });
+    });
+  });
+
+  describe("multiple dice groups", () => {
+    test("positive and negative dice with modifier", () => {
+      mockRandom
+        .mockReturnValueOnce(0.1)
+        .mockReturnValueOnce(0.9)
+        .mockReturnValueOnce(0.5)
+        .mockReturnValueOnce(0.99);
+
+      const { rolls, modifier, total } = roll("2d6 + 1d8 - d4 - 1");
+
+      expect(rolls).toBeArrayOfSize(4);
+      expect(rolls).toContain(1);
+      expect(rolls).toContain(6);
+      expect(rolls).toContain(5);
+      expect(rolls).toContain(-4);
+      expect(modifier).toBe(-1);
+      expect(total).toBe(7);
+    });
+
+    test("leading negative dice", () => {
+      mockRandom.mockReturnValue(0.99);
+
+      const { rolls, modifier, total } = roll("-d4+2");
+
+      expect(rolls).toBeArrayOfSize(1);
+      expect(rolls).toContain(-4);
+      expect(modifier).toBe(2);
+      expect(total).toBe(-2);
     });
   });
 });
