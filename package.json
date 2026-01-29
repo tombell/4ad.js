@@ -17,11 +17,12 @@
     "dist/"
   ],
   "scripts": {
-    "test": "bun test",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "check": "prettier --check .",
+    "format": "prettier --write .",
     "coverage": "bun test --coverage",
-    "check": "bunx prettier --check .",
-    "lint": "bunx eslint",
-    "build": "bunx tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "bun run build"
   },
   "devDependencies": {
