@@ -33,10 +33,6 @@ export function parse(notation: string) {
       const count = parseInt(rawCount || "1", 10);
       const sides = parseInt(rawSides, 10);
 
-      if (!Number.isFinite(count) || !Number.isFinite(sides)) {
-        throw new Error("invalid dice notation");
-      }
-
       dice.push({ count, sides, sign });
     } else {
       const value = parseInt(term, 10);

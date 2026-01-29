@@ -120,6 +120,24 @@ describe("parse", () => {
         parse("+2");
       }).toThrow("invalid dice notation");
     });
+
+    test("invalid dice count", () => {
+      expect(() => {
+        parse("ad6");
+      }).toThrow("invalid dice notation");
+    });
+
+    test("invalid modifier value", () => {
+      expect(() => {
+        parse("d6+abc");
+      }).toThrow("invalid dice notation");
+    });
+
+    test("empty notation", () => {
+      expect(() => {
+        parse("");
+      }).toThrow("invalid dice notation");
+    });
   });
 });
 
@@ -185,6 +203,24 @@ describe("roll", () => {
     test("invalid modifier sign", () => {
       expect(() => {
         roll("d6*6");
+      }).toThrow("invalid dice notation");
+    });
+
+    test("invalid dice count", () => {
+      expect(() => {
+        roll("ad6");
+      }).toThrow("invalid dice notation");
+    });
+
+    test("invalid modifier value", () => {
+      expect(() => {
+        roll("d6+abc");
+      }).toThrow("invalid dice notation");
+    });
+
+    test("empty notation", () => {
+      expect(() => {
+        roll("");
       }).toThrow("invalid dice notation");
     });
 
